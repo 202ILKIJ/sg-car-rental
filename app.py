@@ -87,6 +87,13 @@ def book(car_id):
 
     if request.method == 'POST':
         booking_date = request.form['date']
+
+        # ✅ Check if the user already booked this car on that date
+        existing = conn.execute("SELECT * FROM bookings WHERE car = ? AND user = ? AND date = ?",
+                                (car["name"], session['username'], booking_date)).fetchone()
+        if existing:
+            return f"You have already booked {car['name']} on {booking_date}."
+
         conn.execute("INSERT INTO bookings (car, user, date) VALUES (?, ?, ?)",
                      (car["name"], session['username'], booking_date))
         conn.commit()
@@ -94,10 +101,6 @@ def book(car_id):
 
     return render_template('book.html', car=car)
 
-    # 🔥 Insecure Booking (IDOR, no user validation)
-    conn.execute("INSERT INTO bookings (car, user) VALUES (?, ?)", (car["name"], session['username']))
-    conn.commit()
-    return f"You booked {car['name']}!"
 
 
 @app.route('/feedback', methods=['GET', 'POST'])
