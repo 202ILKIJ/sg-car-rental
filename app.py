@@ -38,16 +38,16 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        # 🔥 SQL Injection Vulnerability
-        query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
-        result = cursor.execute(query).fetchone()
+        # ✅ SAFE: Use parameterized query
+        cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
+        result = cursor.fetchone()
+
         if result:
             session['username'] = username
             return redirect('/cars')
         else:
             msg = "Invalid credentials"
     return render_template('login.html', msg=msg)
-
 
 @app.route('/cars')
 def cars():
