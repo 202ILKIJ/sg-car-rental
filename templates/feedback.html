@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Leave Feedback</h2>
+<form method="post">
+    <input name="comment" placeholder="Your comment">
+    <button type="submit">Submit</button>
+</form>
+<p><b>Latest Comment:</b> {{ msg|safe }}</p>
+{% endblock %}

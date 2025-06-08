@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SG Car Rental Pte Ltd</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>🚗 SG Car Rental Pte Ltd</h1>
+        <nav>
+            <a href="/cars">Cars</a> |
+            <a href="/my_bookings">My Bookings</a> |
+            <a href="/feedback">Feedback</a> |
+            <a href="/logout">Logout</a>
+            <a href="/admin_dashboard">Admin Dashboard</a> |
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

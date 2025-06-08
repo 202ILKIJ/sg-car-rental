@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Book {{ car.name }}</h2>
+<form method="post">
+    <label>Booking Date:</label>
+    <input type="date" name="date" required>
+    <button type="submit">Confirm Booking</button>
+</form>
+<a href="{{ url_for('cars') }}">Back to Cars</a>
+{% endblock %}

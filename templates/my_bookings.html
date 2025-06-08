@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>My Bookings</h2>
+{% if bookings %}
+<ul>
+    {% for car, date in bookings %}
+        <li>{{ car }} - {{ date }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No bookings found.</p>
+{% endif %}
+<a href="{{ url_for('cars') }}">Back to Cars</a>
+{% endblock %}
