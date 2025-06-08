@@ -1,5 +1,6 @@
-from flask import Flask, request, redirect, render_template, session, url_for
+from flask import Flask, request, redirect, render_template, session,
 import sqlite3
+
 
 app = Flask(__name__)
 app.secret_key = 'insecure_secret_key'  # ⚠️ Insecure on purpose for CW2
@@ -102,7 +103,8 @@ def book(car_id):
 def feedback():
     msg = ''
     if request.method == 'POST':
-        msg = request.form['comment']  # 🔥 Stored XSS if stored or reflected unsafely
+        comment = escape(request.form['comment'])  # ✅ Sanitize input
+        msg = comment
     return render_template('feedback.html', msg=msg)
 
 @app.route('/my_bookings')
