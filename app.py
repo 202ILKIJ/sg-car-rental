@@ -1,4 +1,5 @@
 from flask import Flask, request, redirect, render_template, session,
+from markupsafe import ((escape))
 import sqlite3
 
 
