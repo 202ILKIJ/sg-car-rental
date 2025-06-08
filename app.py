@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, render_template, session
 from markupsafe import escape
+from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 
 
@@ -41,10 +42,10 @@ def login():
         password = request.form['password']
 
         # ✅ SAFE: Use parameterized query
-        cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
-        result = cursor.fetchone()
+        cursor.execute("SELECT password FROM users WHERE username = ?", (username,))
+        user = cursor.fetchone()
 
-        if result:
+        if user and check_password_hash(user[0], password):
             session['username'] = username
             return redirect('/cars')
         else:
@@ -65,14 +66,14 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-
-        # 🔥 Vulnerable to SQL Injection (on purpose)
+        hashed_pw = generate_password_hash(password)  # Hash password
         try:
-            conn.execute(f"INSERT INTO users (username, password) VALUES ('{username}', '{password}')")
+            conn.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_pw))
             conn.commit()
             msg = "Registration successful. You can now log in."
         except:
             msg = "Registration failed. User may already exist."
+
     return render_template('register.html', msg=msg)
 
 
