@@ -1,10 +1,14 @@
 from flask import Flask, request, redirect, render_template, session
+from flask_wtf import CSRFProtect
 from markupsafe import escape
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 
 
 app = Flask(__name__)
+csrf = CSRFProtect(app)
+
+
 app.secret_key = 'insecure_secret_key'  # ⚠️ Insecure on purpose for CW2
 
 # Setup database

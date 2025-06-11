@@ -1,3 +1,4 @@
 Flask
 gunicorn
 markupSafe
+pip freeze
