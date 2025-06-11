@@ -16,7 +16,8 @@ cursor = conn.cursor()
 
 # Your existing table creation lines...
 cursor.execute("CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT)")
-cursor.execute("CREATE TABLE IF NOT EXISTS bookings (id INTEGER PRIMARY KEY AUTOINCREMENT, car TEXT, user TEXT)")
+hashed_pw = generate_password_hash('admin123')
+conn.execute("INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)", ('admin', hashed_pw))
 #conn.execute("INSERT OR IGNORE INTO users VALUES ('admin', 'admin123')")
 conn.commit()
 
@@ -41,10 +42,8 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        # ✅ SAFE: Use parameterized query
         cursor.execute("SELECT password FROM users WHERE username = ?", (username,))
         user = cursor.fetchone()
-
         if user and check_password_hash(user[0], password):
             session['username'] = username
             return redirect('/cars')
