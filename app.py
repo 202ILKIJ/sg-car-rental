@@ -1,10 +1,14 @@
 from flask import Flask, request, redirect, render_template, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
+from datetime import timedelta
 import os
+
 
 app = Flask(__name__)
 app.secret_key = 'insecure_secret_key'  # ⚠️ For demo only
+app.permanent_session_lifetime = timedelta(minutes=10)  # Session expires after 10 minutes
+
 
 
 # --- Helper function for DB connection ---
@@ -54,8 +58,10 @@ def login():
         conn.close()
 
         if user and check_password_hash(user['password'], password):
+            session.permanent = True  # Enables expiry based on lifetime
             session['username'] = username
             return redirect('/cars')
+
         else:
             msg = "Invalid credentials"
 
