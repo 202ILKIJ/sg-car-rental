@@ -1,15 +1,26 @@
+import os
 from flask import Flask, request, redirect, render_template, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
+import time
 from datetime import timedelta
-import os
+from werkzeug.utils import secure_filename
 
 
 app = Flask(__name__)
-app.secret_key = 'insecure_secret_key'  # ⚠️ For demo only
 app.permanent_session_lifetime = timedelta(minutes=10)  # Session expires after 10 minutes
+app.secret_key = 'insecure_secret_key'
 
 
+ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'jpeg'}
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Ensure folder exists
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # --- Helper function for DB connection ---
 def get_db_connection():
@@ -156,6 +167,22 @@ def logout():
     session.clear()
     return redirect('/login')
 
+@app.route('/upload_license', methods=['GET', 'POST'])
+def upload_license():
+    if 'username' not in session:
+        return redirect('/login')
+
+    msg = ''
+    if request.method == 'POST':
+        file = request.files.get('license')
+        if file and allowed_file(file.filename):
+            filename = secure_filename(f"{session['username']}_{int(time.time())}.{file.filename.rsplit('.', 1)[1].lower()}")
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            msg = 'Upload successful.'
+        else:
+            msg = 'Invalid file type. Only PDF and JPG/JPEG allowed.'
+    return render_template('upload_license.html', msg=msg)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

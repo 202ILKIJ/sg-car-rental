@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Upload Driving License</h2>
+<p style="color: red;"><strong>Note:</strong> Only .pdf, .jpg, and .jpeg files are allowed.</p>
+
+<form method="post" enctype="multipart/form-data">
+    <input type="file" name="license" accept=".pdf,.jpg,.jpeg" required>
+    <button type="submit">Upload</button>
+</form>
+
+{% if msg %}
+    <p style="color:green;">{{ msg }}</p>
+{% endif %}
+
+<a href="{{ url_for('cars') }}">Back to Cars</a>
+{% endblock %}
